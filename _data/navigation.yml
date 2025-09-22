@@ -4,10 +4,10 @@ main:
     url: /about
   - title: "Recommended Reading"
     url: /reading
-  - title: "Archive"
-    url: /archive
   - title: "Collections"
     url: /collections
+  - title: "Archive"
+    url: /archive
 
 archives:
   - title: By Year

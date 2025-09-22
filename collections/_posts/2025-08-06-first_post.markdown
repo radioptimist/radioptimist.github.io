@@ -17,4 +17,4 @@ Some basic controls for the interative plots on this site:
  - Show the vertices of a mesh using the V key
  - Return to the full mesh using the S key
 
-<iframe src="/assets/meshes/sphere.html" width="100%" height="600" scrolling="no"></iframe>
+<iframe src="{% link /assets/meshes/sphere.html %}" width="100%" height="600" scrolling="no"></iframe>
