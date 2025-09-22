@@ -1,0 +1,26 @@
+# main links
+main:
+  - title: "About"
+    url: /about
+  - title: "Recommended Reading"
+    url: /reading
+  - title: "Archive"
+    url: /archive
+  - title: "Collections"
+    url: /collections
+
+archives:
+  - title: By Year
+    url: /archive
+  - title: By Category
+    url: /archive_by_category
+  - title: Collections
+    url: /collections
+
+pulse_characterization:
+  - title: Home
+    url: /pulse_characterization/
+  - title: Introduction
+    url: /pulse_characterization/tutorial_01_introduction
+  - title: Part 2
+    url: /pulse_characterization/tutorial_02_part2
