@@ -4,7 +4,7 @@ author_profile: false
 toc: fase
 permalink: /archive
 classes: wide
-title: Archive by year
+title: Post archive by year
 sidebar:
   nav: "archives"
 ---

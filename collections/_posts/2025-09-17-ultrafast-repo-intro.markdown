@@ -17,5 +17,4 @@ The README of the project is more up to date than what I can provide here in a p
  - Adding an examples folder, distinct from testing to provide code used in examples on this site.
 For a TLDR 1000 foot view of what the code accomplishes, I encourage you to checkout the background presented in this video:
 
-<iframe src="https://www.youtube.com/embed/AW8EBM_j3B8" onload="this.width=screen.width;this.height=screen.height;">
-</iframe>
+{%include video id="AW8EBM_j3B8" provider="youtube"%}

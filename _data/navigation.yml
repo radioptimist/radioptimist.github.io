@@ -4,15 +4,15 @@ main:
     url: /about
   - title: "Recommended Reading"
     url: /reading
-  - title: "Collections"
+  - title: "Articles"
     url: /collections
-  - title: "Archive"
+  - title: "Post archive"
     url: /archive
 
 archives:
-  - title: By Year
+  - title: Posts By Year
     url: /archive
-  - title: By Category
+  - title: Posts By Category
     url: /archive_by_category
   - title: Collections
     url: /collections
