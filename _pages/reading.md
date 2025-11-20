@@ -17,6 +17,9 @@ I’ve been meaning to keep a list of books I’ve been reading since I’ve fin
  - *Shantaram* by Gregory David Roberts
  - *Chaos* by James Gleick
  - *Abundance* by Ezra Klein and Derek Thompson
+ - *The Science of Information: From Language to Black Holes* by Benjamin Schumacher
+ - *The Selfish Gene* by Richard Dawkins
+ - *How to Invent Everything* by Ryan North
 
 ### 2024
  - *Blood Meridian* by Cormac McCarthy
