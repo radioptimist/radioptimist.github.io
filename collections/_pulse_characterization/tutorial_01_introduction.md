@@ -5,8 +5,23 @@ layout: single
 sidebar:
   nav: pulse_characterization
 ---
+## A brief overview of the problem of pulse-characterization
 
-## This is the first tutorial
+My disertation centered on the use of optimization and
+compressive sensing to solve for the complex time domain
+profile of ultrafast optical pulses. The techniques were 
+highly effective, and through these tutorials I aim to 
+give a brief overview of the techniques presented in 
+my thesis along with some example code.
+
+For a more in depth description of techniques I of course
+recommend reading my [disertation](https://mines.primo.exlibrisgroup.com/permalink/01COLSCHL_INST/1jb8klt/alma998214358002341). If you're not in 
+the mood to read I recommend the Youtube recording of 
+my defense bellow.
+{% include video id="AW8EBM_j3B8" provider="youtube" %}
+
+
+## Some framing to help me organize thoughts while I flesh this out
 $$ e^{j \theta}$$
 
 We can do some latex. 
