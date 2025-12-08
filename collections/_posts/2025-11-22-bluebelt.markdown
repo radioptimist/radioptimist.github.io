@@ -1,0 +1,17 @@
+---
+layout: single
+title:  "Blue Belt"
+date:   2025-11-22 20:00:00 -0600
+categories: BJJ
+gallery1:
+  - image_path: /assets/images/bjj/bluebelt.jpg
+    url: /assets/images/bjj/bluebeltpg
+    title: "Gracie Barra Parker" 
+---
+
+I'm very happy to have found an outstanding gym to learn
+Brazillian Jiu Jitsu, Gracie Barra Parker. I roll with 
+an outstanding crew and was very happy to have promoted to
+blue belt today with several of my friends.
+
+{%include gallery id="gallery1"%}

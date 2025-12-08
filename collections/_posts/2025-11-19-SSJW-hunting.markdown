@@ -2,7 +2,7 @@
 layout: single
 title:  "Hunting South San Juan Wilderness"
 date:   2025-11-19 20:00:00 -0600
-categories: Travel
+categories: [Skyrim Hobbies]
 header: 
   image: /assets/images/hunting2025/2025SSJW_RedLake.jpg
   url: /assets/images/hunting2025/2025SSJW_RedLake.jpg
