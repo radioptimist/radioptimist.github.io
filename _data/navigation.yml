@@ -22,5 +22,5 @@ pulse_characterization:
     url: /pulse_characterization/
   - title: Introduction
     url: /pulse_characterization/tutorial_01_introduction
-  - title: Part 2
+  - title: Wirtinger Gradients
     url: /pulse_characterization/tutorial_02_part2
