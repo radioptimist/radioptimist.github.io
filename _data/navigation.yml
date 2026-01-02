@@ -24,3 +24,23 @@ pulse_characterization:
     url: /pulse_characterization/tutorial_01_introduction
   - title: Wirtinger Gradients
     url: /pulse_characterization/tutorial_02_part2
+
+handyhermit:
+  - title: Home
+    url: /handyhermit/
+  - title: Project Outline
+    url: /handyhermit/project_outline
+  - title: Hardware and Firmware Decisions
+    url: /handyhermit/hardware_firmware
+
+implicitneural:
+  - title: Home
+    url: /implicitneural/
+  - title: Paper Collection
+    url: /implicitneural/paper_collection
+
+antennas:
+  - title: Home
+    url: /antennas/
+  - title: Introduction
+    url: /antennas/introduction

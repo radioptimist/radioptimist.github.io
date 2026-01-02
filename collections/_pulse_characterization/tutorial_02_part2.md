@@ -7,6 +7,7 @@ sidebar:
     pulse_characterization
 scholar:
   bibliography: phase_retrieval
+classes: wide
 ---
 
 # Adapting Scipy's minimize function to operate on Wirtinger gradients in the context of phase retrieval
@@ -261,7 +262,9 @@ use the shorthand $$\mathbf{y}$$ to represent the
 formation of a vector from the measurements 
 $$y_i, i\in [0,1,2,...,M-1]$$. The matrix $$A$$ 
 is similarly formed with $$a_i$$ as its collumns.
-We will abuse $$\odot$$ for element-wise products,
+We will abuse $$\odot$$ for element-wise products
+(or an element multiplying a whole row for a  product
+between a vector and matrix),
 and the square in the following (being internal to the 
 sum) is element-wise as well. Sum over index is 
 assumed:
@@ -287,8 +290,290 @@ $$
 \end{align}
 $$
 
-TO BE CONTINUED. 
+Similarly, we arrive parts for the Wirtinger Hessian:
 
+$$
+\begin{align}
+\frac{\partial}{\partial \mathbf{z}}\left(\frac{\partial f}{\partial \mathbf{z}}\right)^H &= 
+\frac{1}{M} A (\mathbf{r}_+ \odot A^H) \\
+\frac{\partial}{\partial \mathbf{z}^*}\left(\frac{\partial f}{\partial \mathbf{z}}\right)^H &= 
+\frac{1}{M} A (\mathbf{g}^2 \odot A^T) \\
+\mathbf{g} &= A^H z \\
+\mathbf{r}_+ &= 2 (z^H A)\odot(A^H z) - y \\
+\end{align}
+$$
+
+where the full Hessian is constructed as:
+
+$$
+\begin{align}
+nw &=\frac{\partial}{\partial \mathbf{z}}\left(\frac{\partial f}{\partial \mathbf{z}}\right)^H  \\
+ne &= \frac{\partial}{\partial \mathbf{z}^*}\left(\frac{\partial f}{\partial \mathbf{z}}\right)^H \\
+\nabla^2 f &= \begin{pmatrix}
+nw & ne \\
+ne^* & nw^* 
+\end{pmatrix}
+\end{align}
+$$
+
+## Python
+Now the fun part, we're going to adapt all this into 
+Python to use the powerful minimize function that 
+comes with Scipy. Scipy optimizes over a real 
+variable, so we will develop our Wirtinger gradient 
+and Hessian over a complex variable that is wrapped in 
+a real conversion function that minimize will call.
+
+We begin by creating functions to generate test vectors
+for recovery and test matrices to generate phaseless 
+measurements. For both of these we will be using 
+complex Gaussian distributed random numbers to demonstrate
+arbitrary varibles. We generate a test function to 
+create an arbitrary $$\mathbf{x}$$, an arbitrary $$A$$,
+and their resulting phaseless measurements
+$$\mathbf{y} = |A^H \mathbf{x}|$$.
+
+{%highlight python linenos=table%}
+import numpy as np
+import matplotlib.pyplot as plt
+from scipy.optimize import minimize
+import matplotlib.gridspec as gridspec
+
+def cgaus(rows,cols):
+    val = np.random.randn(rows,cols) +\
+          np.random.randn(rows,cols) * 1j
+    val /= np.linalg.norm(val,axis=0)[None,:]
+    return val
+
+def meas(X,A):
+    y = np.abs(A.conj().T @ X)
+    return y
+
+def test_meas():
+    N = 16
+    m = 100
+    X = cgaus(N,1)
+    A = cgaus(N,m)
+    y = meas(X,A)
+    plot_setup(X,A,y)
+
+def plot_setup(X,A,y):
+    fig = plt.figure(figsize=[10,5])
+    gs = gridspec.GridSpec(2,3,figure=fig)
+    ax1 = fig.add_subplot(gs[0,0])
+    ax2 = fig.add_subplot(gs[1,0])
+    ax3= fig.add_subplot(gs[0,1:])
+    ax4 = fig.add_subplot(gs[1,1:])
+    ax1.imshow(np.real(A),aspect = 'auto',interpolation='none')
+    ax2.imshow(np.imag(A),aspect = 'auto',interpolation='none')
+    ax1.xaxis.set_visible(False)
+    ax1.set_ylabel("N")
+    ax2.set_ylabel("N")
+    ax2.set_xlabel("M")
+    ax3.plot(np.real(X),label='real')
+    ax3.plot(np.imag(X),label='imag')
+    ax3.set_xlabel("N")
+    ax4.plot(y,label='$y=|A^Hx|$')
+    ax4.plot(np.real(A.conj().T @ X).flatten(),label='$[ A^H x ]_R$',linestyle='--')
+    ax4.plot(np.imag(A.conj().T @ X).flatten(),label='$[ A^H x ]_I$',linestyle='--')
+    ax4.set_xlabel("M")
+    ax4.legend(ncol=3,loc='lower left')
+    ax3.yaxis.tick_right()
+    ax3.yaxis.set_label_position('right')
+    ax4.yaxis.tick_right()
+    ax4.yaxis.set_label_position('right')
+    ax1.set_title("$A$, real")
+    ax2.set_title("$A$, imag")
+    ax3.set_title("$x$, real and imaginary")
+    ax4.set_title("Measurement $y$, missing phase")
+    fig.tight_layout()
+    plt.show()
+{%endhighlight%}
+
+An example of a plot created by this code is here:
+{%include figure popup=True image_path="/assets/images/pulse_characterization/phase_retreival/example_dataset.svg" caption="Example dataset generated for phase retrieval" %}
+
+Next up, we need functions to create cost function,
+the Wirtinger gradient and Hessian functions, 
+and functions to wrap them
+so we can call them from Scipy minimize. We will pass
+a concatenated vector (real/imag) from Scipy, so 
+this wrapping function will do the conversion to 
+complex variables and their conjugate. The wrapping
+functions are prepended with "scipy". We also
+demonstrate that the values are identical in a test
+function when transformed by the $$T_N$$ matrices
+defined earlier.
+
+{%highlight python linenos=table%}
+def wgrad(x,y,A):
+    # Wirtinger gradient of the standard PR cost function
+    forward = A.conj().T@x
+    resid =  np.abs(forward)**2 - y**2
+    prod = (A @ (resid * forward)) / A.shape[1]
+    return np.vstack([prod,prod.conj()])
+
+def whess(x,y,A):
+    # Wirtinger Hessian of the standard PR cost function
+    forward = A.conj().T@x
+    resid_plus =  2 * np.abs(forward)**2 - y**2
+    nw = A @ (resid_plus*A.conj().T)
+    ne = A @ (forward ** 2 * A.T)
+    top = np.hstack([nw,ne])
+    bottom = np.hstack([ne,nw]).conj()
+    return np.vstack([top,bottom]) / A.shape[1]
+
+def scipy_wgrad(x,y,A):
+    N = x.shape[0]//2
+    X = x[:N] + 1j * x[N:]
+    X = X.reshape(N,-1)
+    grad = wgrad(X,y,A)
+    z = grad[:N]
+    zc = grad[N:]
+    return np.real(np.vstack([z + zc,1j * (zc - z)])).flatten()/2
+
+def scipy_whess(x,y,A):
+    N = x.shape[0]//2
+    X = x[:N] + 1j * x[N:]
+    X = X.reshape(N,-1)
+    hess = whess(X,y,A)
+    a,b,c,d = hess[:N,:N],hess[:N,N:],hess[N:,:N],hess[N:,N:]
+    H = np.zeros_like(hess)
+    H[:N,:N] =  a + b + c + d
+    H[:N,N:] =(-a + b - c + d) * -1j
+    H[N:,:N] =( a + b - c - d) * -1j
+    H[N:,N:] =  a - b - c + d
+    return np.real(H) / 4
+
+def test_wirt():
+    N = 16
+    m = 100
+    X = cgaus(N,1)
+    A = cgaus(N,m)
+    y = meas(X,A)
+    pert = X + cgaus(N,1) * 1e-0
+
+    grad = wgrad(pert,y,A)
+    hess = whess(pert,y,A)
+
+    ripert = np.vstack([np.real(pert),np.imag(pert)]).flatten()
+    sgrad = scipy_wgrad(ripert,y,A)
+    shess = scipy_whess(ripert,y,A)
+
+    Tx = np.vstack([np.hstack([np.eye(N), 1j * np.eye(N)]),\
+                    np.hstack([np.eye(N),-1j*np.eye(N)])])
+
+    grad_cx = (Tx @ sgrad).flatten()
+    grad = grad.flatten()
+    grad_ri = (Tx.T.conj() @ grad).flatten()/2
+    print(np.linalg.norm( grad - grad_cx))
+    print(np.linalg.norm( grad_ri - sgrad.flatten()))
+
+    hess_cx = Tx @ shess @ Tx.T.conj()
+    hess_ri = Tx.T.conj() @ hess @ Tx  / 4
+    print(np.linalg.norm(hess - hess_cx))
+    print(np.linalg.norm(shess - hess_ri))
+{%endhighlight%}
+
+These evaluate to machine precision. One final detail
+is that any optimization that recovers $$x$$ will be 
+off by a global phase, so we have a utility function 
+for recovered vectors that aligns phase to ground-truth
+for the purpose comparison. This is a cheap trick to 
+determine phase difference between the recovered 
+vectors, we demix one vector with another, and take the 
+median phase offset.
+
+{%highlight python linenos=table%}
+def align(xout,X):
+    phasing = np.median(np.angle(xout.conj() * X.flatten()))
+    xout *= np.exp(1j * phasing)
+    return xout
+{%endhighlight%}
+
+This final test function puts everything together:
+creating a test set, adding noise at controlled SNR,
+initialize a starting point for optimization randomly,
+calls minimize with "Newton-CG" options, and then plots
+results. I encourage testing with various methods, 
+a favorite of mine is Newton-CG and L-BFGS-B. Both 
+converge (as my old mentor Scott would say)
+"like a bat out of hell".
+
+{%highlight python linenos=table%}
+def test_grad_descent():
+    N = 32
+    m = N * 10
+    X = cgaus(N,1)
+    A = cgaus(N,m)
+    y = meas(X,A)
+    snr = 60
+    noise = np.random.randn(m)**2
+    noise/=np.linalg.norm(noise)/np.linalg.norm(y)
+    y += noise[:,None] * 10**(-snr/20)
+    pert = cgaus(N,1) 
+    print(np.linalg.norm(pert - X))
+
+    init = np.vstack([np.real(pert), np.imag(pert)]).flatten()
+    x = minimize(cost,init,args=(y,A),\
+                 method='Newton-CG',jac=scipy_wgrad,\
+                 hess = scipy_whess,
+                 options=dict(disp=True),tol = 1e-16)
+    print(x)
+    
+    xout = x.x[:N] + x.x[N:] * 1j
+    xout = align(xout,X)
+
+    plot_result(xout,X, y, A)
+
+def plot_result(xout,X,y,A):
+    error = np.linalg.norm(xout - X.flatten())
+    y_rec = np.abs(A.conj().T @ xout).flatten()
+    y = y.flatten()
+
+    fig = plt.figure(figsize=[10,5])
+    gs = gridspec.GridSpec(2,2,figure=fig)
+    ax1 = fig.add_subplot(gs[:,:1])
+    ax2 = fig.add_subplot(gs[0,1:])
+    ax3 = fig.add_subplot(gs[1,1:])
+
+    ax1.semilogy(y,label='$y$')
+    ax1.semilogy(y_rec,label='$y_{rec}$')
+    ax1.semilogy(np.abs(y - y_rec),label='$|y-y_{rec}|$')
+    ax1.legend()
+
+    ax2.plot(np.abs(X.flatten()),label='x')
+    ax2.plot(np.abs(xout),label='x_{rec}')
+    ax2.plot(np.abs(xout - X.flatten()),label='|x - x_{rec}|')
+    ax2.legend()
+
+    ax3.plot(np.angle(X.flatten() * xout.conj()))
+    ax1.set_title(r"$y = |A^H x| + w[n]$ and $y_{rec} = |A^H x_{rec}|$")
+    ax2.set_title(r"$|x|$ and recovered $|x_{rec}|$")
+    ax3.set_title(r"$ \angle (x \odot x_{rec}^*)$")
+
+    ax2.xaxis.set_visible(False)
+    ax3.set_xlabel("N")
+
+    ax2.yaxis.tick_right()
+    ax2.yaxis.set_label_position('right')
+    ax3.yaxis.tick_right()
+    ax3.yaxis.set_label_position('right')
+    ax1.set_xlabel("M")
+    plt.show()
+{%endhighlight%}
+
+The output plot is shown here. After phase alignment, 
+the result is quite comparable even with random 
+initialization and noise.
+{%include figure popup=True image_path="/assets/images/pulse_characterization/phase_retreival/result.svg" caption="Example recovery at 60dB SNR" %}
+
+The relationship between noise, measurement count, 
+and problem dimension are explored extensively in the 
+literature including {%cite review%}. 
+Thank you for perusing and I hope that this
+demonstration helps you if you ever need to use Python
+for Wirtinger descent problems!
 
 {% bibliography --cited %}
 

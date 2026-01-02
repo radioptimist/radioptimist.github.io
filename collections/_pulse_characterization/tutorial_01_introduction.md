@@ -4,6 +4,7 @@ lesson: 01
 layout: single
 sidebar:
   nav: pulse_characterization
+classes: wide
 ---
 ## A brief overview of the problem of pulse-characterization
 

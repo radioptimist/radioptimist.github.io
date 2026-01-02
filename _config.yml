@@ -233,6 +233,18 @@ collections:
     output: true
     permalink: /:collection/:path/
     sort_by: lesson
+  handyhermit: 
+    output: true
+    permalink: /:collection/:path/
+    sort_by: lesson
+  implicitneural:
+    output: true
+    permalink: /:collection/:path/
+    sort_by: lesson
+  antennas:
+    output: true
+    permalink: /:collection/:path/
+    sort_by: lesson
 
 scholar: 
   style: ieee
