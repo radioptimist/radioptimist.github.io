@@ -13,7 +13,7 @@ This page is a grouping of software tutorials
 and demonstrations, my ongoing projects,
 and research topics that I've been burrowing into.
 Tutorials are on topics that 
-I have extensie background in and are typically
+I have extensive background in and are typically
 associated with a github project.
 Projects is a less specific collection of robotics, 
 home automation, and other passion project topics.
