@@ -46,6 +46,8 @@ I’ve been meaning to keep a list of books I’ve been reading since I’ve fin
  - *There is No Antimemetics Division* by qntm
  - *Project Hail Mary* by Andy Weir
  - *Effective Modern C++* by Scott Meyers
+ - *The Winter of Our Discontent* by John Steinbeck
+ - *The Prime Number Conspiracy: The Biggest Ideas in Math from Quanta* editted by Thomas Lin
 
 ### 2025
  - *The New Rules of War* by Sean McFate
