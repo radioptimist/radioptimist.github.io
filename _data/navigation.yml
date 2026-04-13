@@ -44,3 +44,9 @@ antennas:
     url: /antennas/
   - title: Introduction
     url: /antennas/introduction
+
+dsp:
+  - title: Home
+    url: /dsp/
+  - title: Practical CRLB Frequency Estimation
+    url: /dsp/01_freq_estimation

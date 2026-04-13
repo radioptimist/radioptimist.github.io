@@ -229,6 +229,10 @@ defaults:
 collections_dir: collections
 
 collections:
+  dsp: 
+    output: true
+    permalink: /:collection/:path/
+    sort_by: lesson
   pulse_characterization: 
     output: true
     permalink: /:collection/:path/
