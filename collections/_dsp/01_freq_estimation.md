@@ -1,5 +1,5 @@
 ---
-title: Practical CRLB Frequency Esimtation
+title: Practical CRLB Frequency Estimation
 lesson: 01
 layout: single
 sidebar:
