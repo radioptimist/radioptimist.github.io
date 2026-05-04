@@ -14,7 +14,7 @@ classes: wide
 ## Keeping it simple
 Often times in signal processing, estimating the center frequency of a 
 digital complex baseband signal is a crucial ingredient in topics
-spaning engineering, physics, and math. There are a lot of beautiful 
+spanning engineering, physics, and math. There are a lot of beautiful 
 approaches to measuring center frequency that deserve their own discussion 
 another time. 
 
@@ -24,12 +24,12 @@ tone. All of these techniques have a time and a place. Some of them are
 convenient and achieve expected results, some of them have a couple 
 more steps and achieve the highest quality result: Cramér Rao Lower Bound (CRLB).
 
-A phenominal source of my own cotinuing education and excellent base for 
+A phenomenal source of my own continuing education and excellent base for 
 estimation theory can be found at Professor Fowler's Estimation theory course
 website {% cite estimation %}. Another resource I like
 
 ## Framing the problem
-We assume we are looking at a baesband collected complex sinusoid of the 
+We assume we are looking at a baseband collected complex sinusoid of the 
 following model which declares our measured data $$x[n]$$ and our unknown
 model parameters $$A, f, \phi$$.
 
@@ -44,7 +44,7 @@ w[n] & \sim \mathcal{CN}\left(0, \sigma \right)
 $$
 
 We note that our estimates will have to extract information in the 
-presence of complex gaussian noise. The strength of this noise 
+presence of complex Gaussian noise. The strength of this noise 
 will be defined by measured by signal to noise ratio $$A^2 / \sigma^2$$.
 In these problems, unknown variables often depend on each other and can 
 contribute in difficulty to determining any one of them. In this particular 
@@ -79,11 +79,11 @@ This can also naturally extend into another useful metric, the Root-Mean-Squared
 which is represents the standard deviation of error of an estimator. 
 We will occasionally also use the Median-Squared Error as a useful metric when looking 
 at phase transition plots where error suddenly jumps. The median can sometimes reveal boundaries
-better than mean since over many trials the median is less swayed by outerliers.
+better than mean since over many trials the median is less swayed by outliers.
 
 ## Numerical Test Parameters
 Each of these estimators will have their MSE confirmed numerically 
-accross 50 trials over a range of signal lengths $$N$$ and $$SNR$$. 
+across 50 trials over a range of signal lengths $$N$$ and $$SNR$$. 
 We will take the MSE over the 50 trials and return results as an 
 image over $$N$$ and $$SNR$$. We will also typically provide a
 comparison to some analytic function that predicts MSE in the 
@@ -116,13 +116,13 @@ frequency estimation. The results of the numerical test are shown here:
 {%include figure popup=True image_path="/assets/images/dsp/freq_estimation/basic_fft_precision.svg" caption="FFT MSE" %}
 
 Note the color range of the plot may seem off, but is meant to scale and compare
-to other estimators that will acheive higher precision. An important feature 
+to other estimators that will achieve higher precision. An important feature 
 to notice about this plot is the section to the left of the blue line in the 
-lefthand figure, a cliff where error is suddenly quite high compared to the other side
+left-hand figure, a cliff where error is suddenly quite high compared to the other side
 of the line. This section breaks assumptions about the peak value in the frequency domain. 
 To the left side of this line, we should not expect frequency estimators built on FFT
 to function because noise power in the FFT will begin to take values higher than
-the concentrated peak signal value. We analyze this phenomina deeper in the next section.
+the concentrated peak signal value. We analyze this phenomena deeper in the next section.
 
 ## When do FFT methods succeed or fail?
 
